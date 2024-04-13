@@ -60,7 +60,7 @@ const (
 	// UpdateTypeEditedChannelPost is new version of a channel post that is known to the bot and was edited
 	UpdateTypeEditedChannelPost = "edited_channel_post"
 
-	// UpdateTypeMessageReactionis is a reaction to a message was changed by a user
+	// UpdateTypeMessageReaction is a reaction to a message was changed by a user
 	UpdateTypeMessageReaction = "message_reaction"
 
 	// UpdateTypeMessageReactionCount are reactions to a message with anonymous reactions were changed
@@ -112,7 +112,6 @@ const (
 	UpdateTypeRemovedChatBoost = "removed_chat_boost"
 )
 
-// Library errors
 const (
 	ErrBadURL = "bad or empty url"
 )
@@ -537,6 +536,9 @@ type DocumentConfig struct {
 
 func (config DocumentConfig) params() (Params, error) {
 	params, err := config.BaseFile.params()
+	if err != nil {
+		return params, err
+	}
 
 	params.AddNonEmpty("caption", config.Caption)
 	params.AddNonEmpty("parse_mode", config.ParseMode)
@@ -712,6 +714,9 @@ type VideoNoteConfig struct {
 
 func (config VideoNoteConfig) params() (Params, error) {
 	params, err := config.BaseChat.params()
+	if err != nil {
+		return params, err
+	}
 
 	params.AddNonZero("duration", config.Duration)
 	params.AddNonZero("length", config.Length)
@@ -796,6 +801,9 @@ type LocationConfig struct {
 
 func (config LocationConfig) params() (Params, error) {
 	params, err := config.BaseChat.params()
+	if err != nil {
+		return params, err
+	}
 
 	params.AddNonZeroFloat("latitude", config.Latitude)
 	params.AddNonZeroFloat("longitude", config.Longitude)
@@ -823,6 +831,9 @@ type EditMessageLiveLocationConfig struct {
 
 func (config EditMessageLiveLocationConfig) params() (Params, error) {
 	params, err := config.BaseEdit.params()
+	if err != nil {
+		return params, err
+	}
 
 	params.AddNonZeroFloat("latitude", config.Latitude)
 	params.AddNonZeroFloat("longitude", config.Longitude)
@@ -865,6 +876,9 @@ type VenueConfig struct {
 
 func (config VenueConfig) params() (Params, error) {
 	params, err := config.BaseChat.params()
+	if err != nil {
+		return params, err
+	}
 
 	params.AddNonZeroFloat("latitude", config.Latitude)
 	params.AddNonZeroFloat("longitude", config.Longitude)
@@ -893,6 +907,9 @@ type ContactConfig struct {
 
 func (config ContactConfig) params() (Params, error) {
 	params, err := config.BaseChat.params()
+	if err != nil {
+		return params, err
+	}
 
 	params["phone_number"] = config.PhoneNumber
 	params["first_name"] = config.FirstName
@@ -1044,6 +1061,9 @@ type ChatActionConfig struct {
 
 func (config ChatActionConfig) params() (Params, error) {
 	params, err := config.BaseChat.params()
+	if err != nil {
+		return params, err
+	}
 
 	params["action"] = config.Action
 	params.AddNonZero("message_thread_id", config.MessageThreadID)
@@ -1242,7 +1262,9 @@ func (config UpdateConfig) params() (Params, error) {
 	params.AddNonZero("offset", config.Offset)
 	params.AddNonZero("limit", config.Limit)
 	params.AddNonZero("timeout", config.Timeout)
-	params.AddInterface("allowed_updates", config.AllowedUpdates)
+	if err := params.AddInterface("allowed_updates", config.AllowedUpdates); err != nil {
+		return params, err
+	}
 
 	return params, nil
 }
@@ -2177,7 +2199,9 @@ type GetCustomEmojiStickersConfig struct {
 func (config GetCustomEmojiStickersConfig) params() (Params, error) {
 	params := make(Params)
 
-	params.AddInterface("custom_emoji_ids", config.CustomEmojiIDs)
+	if err := params.AddInterface("custom_emoji_ids", config.CustomEmojiIDs); err != nil {
+		return params, err
+	}
 
 	return params, nil
 }
@@ -2216,7 +2240,6 @@ type NewStickerSetConfig struct {
 	Name            string
 	Title           string
 	Stickers        []InputSticker
-	StickerFormat   string
 	StickerType     string
 	NeedsRepainting bool //optional; Pass True if stickers in the sticker set must be repainted to the color of text when used in messages, the accent color if used as emoji status, white on chat photos, or another appropriate color based on context; for custom emoji sticker sets only
 }
@@ -2231,7 +2254,6 @@ func (config NewStickerSetConfig) params() (Params, error) {
 	params.AddNonZero64("user_id", config.UserID)
 	params["name"] = config.Name
 	params["title"] = config.Title
-	params["sticker_format"] = config.StickerFormat
 
 	params.AddBool("needs_repainting", config.NeedsRepainting)
 	params.AddNonEmpty("sticker_type", string(config.StickerType))
@@ -2310,7 +2332,7 @@ func (config SetCustomEmojiStickerSetThumbnailConfig) params() (Params, error) {
 	return params, nil
 }
 
-// SetStickerSetTitle allows you to set the title of a created sticker set
+// SetStickerSetTitleConfig allows you to set the title of a created sticker set
 type SetStickerSetTitleConfig struct {
 	Name  string
 	Title string
@@ -2361,6 +2383,27 @@ func (config DeleteStickerConfig) params() (Params, error) {
 	params["sticker"] = config.Sticker
 
 	return params, nil
+}
+
+// ReplaceStickerInSetConfig allows you to replace an existing sticker in a sticker set with a new one.
+type ReplaceStickerInSetConfig struct {
+	UserID     int64
+	Name       string
+	OldSticker string
+	Sticker    InputSticker
+}
+
+func (config ReplaceStickerInSetConfig) method() string {
+	return "replaceStickerInSet"
+}
+
+func (config ReplaceStickerInSetConfig) params() (Params, error) {
+	params := make(Params)
+	params.AddNonZero64("user_id", config.UserID)
+	params["name"] = config.Name
+	params["old_sticker"] = config.OldSticker
+	err := params.AddInterface("sticker", config.Sticker)
+	return params, err
 }
 
 // SetStickerEmojiListConfig allows you to change the list of emoji assigned to a regular or custom emoji sticker. The sticker must belong to a sticker set created by the bot
@@ -2424,6 +2467,7 @@ func (config SetStickerMaskPositionConfig) params() (Params, error) {
 type SetStickerSetThumbConfig struct {
 	Name   string
 	UserID int64
+	Format string
 	Thumb  RequestFileData
 }
 
@@ -2435,6 +2479,7 @@ func (config SetStickerSetThumbConfig) params() (Params, error) {
 	params := make(Params)
 
 	params["name"] = config.Name
+	params["format"] = config.Format
 	params.AddNonZero64("user_id", config.UserID)
 
 	return params, nil
@@ -2737,6 +2782,20 @@ func (config GetUserChatBoostsConfig) params() (Params, error) {
 	params.AddNonZero64("user_id", config.UserID)
 
 	return params, err
+}
+
+type GetBusinessConnectionConfig struct {
+	BusinessConnectionID string
+}
+
+func (config GetBusinessConnectionConfig) method() string {
+	return "getBusinessConnection"
+}
+
+func (config GetBusinessConnectionConfig) params() (Params, error) {
+	params := make(Params)
+	params.AddNonEmpty("business_connection_id", config.BusinessConnectionID)
+	return params, nil
 }
 
 // GetMyCommandsConfig gets a list of the currently registered commands.

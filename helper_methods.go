@@ -28,6 +28,24 @@ func NewMessage(chatID int64, text string) MessageConfig {
 	}
 }
 
+// NewBusinessMessage
+//
+// chatID is where to send it, businessConnectionID id of business connection, text is the message text.
+func NewBusinessMessage(chatID int64, businessConnectionID string, text string) MessageConfig {
+	return MessageConfig{
+		BaseChat: BaseChat{
+			ChatConfig: ChatConfig{
+				ChatID: chatID,
+			},
+			BusinessConnectionID: businessConnectionID,
+		},
+		Text: text,
+		LinkPreviewOptions: LinkPreviewOptions{
+			IsDisabled: false,
+		},
+	}
+}
+
 // NewDeleteMessage creates a request to delete a message.
 func NewDeleteMessage(chatID int64, messageID int) DeleteMessageConfig {
 	return DeleteMessageConfig{
