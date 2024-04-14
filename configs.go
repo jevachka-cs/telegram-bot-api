@@ -2039,7 +2039,7 @@ func (config DeleteMessageConfig) params() (Params, error) {
 	return config.BaseChatMessage.params()
 }
 
-// DeleteMessageConfig contains information of a messages in a chat to delete.
+// DeleteMessagesConfig contains information of a messages in a chat to delete.
 type DeleteMessagesConfig struct {
 	BaseChatMessages
 }

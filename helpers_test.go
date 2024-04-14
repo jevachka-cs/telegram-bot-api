@@ -179,7 +179,7 @@ func TestNewInlineKeyboardButtonLoginURL(t *testing.T) {
 }
 
 func TestNewInlineKeyboardButtonSwitchInlineQueryChoosenChat(t *testing.T) {
-	result := NewInlineKeyboardButtonSwitchInlineQueryChoosenChat("text", SwitchInlineQueryChosenChat{
+	result := NewInlineKeyboardButtonSwitchInlineQueryChosenChat("text", SwitchInlineQueryChosenChat{
 		Query:             "query",
 		AllowUserChats:    false,
 		AllowBotChats:     false,

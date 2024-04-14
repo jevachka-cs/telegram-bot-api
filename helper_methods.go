@@ -167,8 +167,8 @@ func NewSticker(chatID int64, file RequestFileData) StickerConfig {
 	}
 }
 
-// NewCustomEmojiStickerSetThumbnal creates a new setCustomEmojiStickerSetThumbnal request
-func NewCustomEmojiStickerSetThumbnal(name, customEmojiID string) SetCustomEmojiStickerSetThumbnailConfig {
+// NewCustomEmojiStickerSetThumbnail creates a new setCustomEmojiStickerSetThumbnail request
+func NewCustomEmojiStickerSetThumbnail(name, customEmojiID string) SetCustomEmojiStickerSetThumbnailConfig {
 	return SetCustomEmojiStickerSetThumbnailConfig{
 		Name:          name,
 		CustomEmojiID: customEmojiID,
@@ -776,9 +776,9 @@ func NewInlineKeyboardButtonWebApp(text string, webapp WebAppInfo) InlineKeyboar
 	}
 }
 
-// NewInlineKeyboardButtonSwitchInlineQueryChoosenChat creates an inline keyboard button with text
+// NewInlineKeyboardButtonSwitchInlineQueryChosenChat creates an inline keyboard button with text
 // which goes to a SwitchInlineQueryChosenChat.
-func NewInlineKeyboardButtonSwitchInlineQueryChoosenChat(text string, switchInlineQueryChosenChat SwitchInlineQueryChosenChat) InlineKeyboardButton {
+func NewInlineKeyboardButtonSwitchInlineQueryChosenChat(text string, switchInlineQueryChosenChat SwitchInlineQueryChosenChat) InlineKeyboardButton {
 	return InlineKeyboardButton{
 		Text:                        text,
 		SwitchInlineQueryChosenChat: &switchInlineQueryChosenChat,
@@ -1063,7 +1063,8 @@ func NewGetMyDescription(languageCode string) GetMyDescriptionConfig {
 	}
 }
 
-// NewSetMyShortDescription allows you change the bot's short description, which is shown on the bot's profile page and is sent together with the link when users share the bot.
+// NewSetMyShortDescription allows you to change the bot's short description, which is shown on the bot's profile
+// page and is sent together with the link when users share the bot.
 func NewSetMyShortDescription(shortDescription, languageCode string) SetMyShortDescriptionConfig {
 	return SetMyShortDescriptionConfig{
 		ShortDescription: shortDescription,
