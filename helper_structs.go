@@ -19,11 +19,12 @@ func (base ChatConfig) paramsWithKey(key string) (Params, error) {
 // BaseChat is base type for all chat config types.
 type BaseChat struct {
 	ChatConfig
-	MessageThreadID     int
-	ProtectContent      bool
-	ReplyMarkup         interface{}
-	DisableNotification bool
-	ReplyParameters     ReplyParameters
+	MessageThreadID      int
+	ProtectContent       bool
+	ReplyMarkup          interface{}
+	DisableNotification  bool
+	BusinessConnectionID string
+	ReplyParameters      ReplyParameters
 }
 
 func (chat *BaseChat) params() (Params, error) {
@@ -35,6 +36,7 @@ func (chat *BaseChat) params() (Params, error) {
 	params.AddNonZero("message_thread_id", chat.MessageThreadID)
 	params.AddBool("disable_notification", chat.DisableNotification)
 	params.AddBool("protect_content", chat.ProtectContent)
+	params.AddNonEmpty("business_connection_id", chat.BusinessConnectionID)
 
 	err = params.AddInterface("reply_markup", chat.ReplyMarkup)
 	if err != nil {
